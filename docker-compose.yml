@@ -1,0 +1,82 @@
+version: '3.8'
+
+networks:
+  backend:
+  emqx-bridge:
+    driver: bridge
+  srs:
+
+volumes:
+  vol-emqx-data:
+  vol-emqx-etc:
+  vol-emqx-log:
+
+services:
+  emqx:
+    image: emqx:5.1.0
+    restart: unless-stopped
+    environment:
+      EMQX_NAME: emqx
+      EMQX_HOST: 127.0.0.1
+    healthcheck:
+      test: [ "CMD", "/opt/emqx/bin/emqx_ctl", "status" ]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+    networks:
+      - emqx-bridge
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "8084:8084"
+      - "8883:8883"
+      - "18083:18083"
+    volumes:
+      - vol-emqx-data:/opt/emqx/data
+      - vol-emqx-etc:/opt/emqx/etc
+      - vol-emqx-log:/opt/emqx/log
+  server:
+    build:
+      context: ./server
+      target: ${ENVIRONMENT}
+    env_file:
+      - ./.env
+      - ./server/.env.docker
+    ports:
+      - "3000:3000"
+    networks:
+        - emqx-bridge
+        - backend
+    links:
+      - emqx
+  web:
+    build:
+      context: ./web
+      target: ${ENVIRONMENT}
+      args:
+        - OSSRS_HOST=${OSSRS_HOST}
+        - NEXT_MESSAGE_MAX_WAIT_TIME=${NEXT_MESSAGE_MAX_WAIT_TIME}
+        - WEBSOCKET_HOST=${WEBSOCKET_HOST}
+        - WEBSOCKET_PORT=${WEBSOCKET_PORT}
+    env_file:
+      - ./.env
+      - ./web/.env.docker
+    ports:
+      - "80:80"
+    networks:
+        - backend
+        - srs
+  srs:
+    image: ossrs/srs:5
+    restart: unless-stopped
+    command: objs/srs -c conf/rtc.conf
+    env_file:
+      - ./.env
+    ports:
+      - "1935:1935"
+      - "1985:1985"
+      - "8080:8080"
+      - "8000:8000/udp"
+    networks:
+      - backend
+      - srs

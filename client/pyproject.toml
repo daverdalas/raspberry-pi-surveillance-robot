@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "client"
+version = "0.1.0"
+description = ""
+authors = ["Piotr Suchanek <hunterdaver@gmail.com>"]
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+rpi-gpio = {version = "^0.7.1", platform = "linux"}
+paho-mqtt = "^1.6.1"
+fake-rpi = "^0.7.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

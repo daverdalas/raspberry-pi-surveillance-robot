@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  server:
+    volumes:
+      - ./server:/app:cached
+  web:
+    volumes:
+      - ./web:/app:cached
+    ports:
+      - "5173:5173"
+  client:
+    privileged: true
+    env_file:
+      - ./.env
+      - ./client/.env.docker
+    build:
+      context: ./client
+    networks:
+      - emqx-bridge
+      - srs
+    volumes:
+      - ./client:/app:cached
+    devices:
+      - "/dev/video0:/dev/video0"
