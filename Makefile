@@ -12,6 +12,36 @@ server-install:
 web-install:
 	${COMPOSE} exec web npm install
 
+start: base-start
+	trap 'make running-services-kill' SIGINT; \
+	(${MAKE} server-start & ${MAKE} web-start & ${MAKE} client-start & wait)
+
+base-start:
+	${COMPOSE} up -d
+
+server-start:
+	${COMPOSE} exec -T server npm run start:dev
+
+web-start:
+	${COMPOSE} exec -T web npm run dev
+
+client-start:
+	${COMPOSE} exec -T client poetry run python src/main.py
+
+running-services-kill: server-kill web-kill
+
+server-kill:
+	${COMPOSE} exec server pkill -f "node" || true
+
+web-kill:
+	${COMPOSE} exec web pkill -f "node" || true
+
+client-kill:
+	${COMPOSE} exec client pkill -f "python" || true
+
+down:
+	${COMPOSE} down
+
 lint: server-lint web-lint
 
 server-lint:
