@@ -20,6 +20,9 @@ RUN apk update && apk add --no-cache  \
     opus-dev \
     x264-dev
 
+RUN cargo install watchexec-cli
+RUN cp /root/.cargo/bin/watchexec /bin
+
 RUN pip install "poetry==$POETRY_VERSION"
 
 WORKDIR /usr/local/src

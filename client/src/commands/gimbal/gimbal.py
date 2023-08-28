@@ -6,14 +6,14 @@ from commands.gimbal.servo import Servo
 
 class Gimbal:
     def __init__(self, gpio: ModuleType, timeout: float):
-        self._servo_horizontal: Servo = Servo(gpio=gpio, servo_pin=23)
-        self._servo_vertical: Servo = Servo(gpio=gpio, servo_pin=9, min_angle=40)
+        self._servo_horizontal: Servo = Servo(servo_pin=23)
+        self._servo_vertical: Servo = Servo(servo_pin=9, min_angle=40)
         self._timeout: float = timeout
         self._start_time = time.time()
         self._thread = threading.Thread(target=self._gimbal_thread, daemon=True)
         self._thread.start()
 
-    def _gimbal_thread(self):
+    def _gimbal_thread(self) -> None:
         while True:
             if time.time() - self._start_time >= self._timeout:
                 self.stop()
@@ -22,54 +22,54 @@ class Gimbal:
                 self._servo_vertical.continue_movement()
             time.sleep(0.1)
 
-    def up(self):
+    def up(self) -> None:
         self._start_time = time.time()
         self._servo_vertical.forward()
         self._servo_horizontal.stop()
 
-    def up_left(self):
+    def up_left(self) -> None:
         self._start_time = time.time()
         self._servo_vertical.forward()
         self._servo_horizontal.forward()
 
-    def up_right(self):
+    def up_right(self) -> None:
         self._start_time = time.time()
         self._servo_vertical.forward()
         self._servo_horizontal.backward()
 
-    def down(self):
+    def down(self) -> None:
         self._start_time = time.time()
         self._servo_vertical.backward()
         self._servo_horizontal.stop()
 
-    def down_left(self):
+    def down_left(self) -> None:
         self._start_time = time.time()
         self._servo_vertical.backward()
         self._servo_horizontal.forward()
 
-    def down_right(self):
+    def down_right(self) -> None:
         self._start_time = time.time()
         self._servo_vertical.backward()
         self._servo_horizontal.backward()
 
-    def left(self):
+    def left(self) -> None:
         self._start_time = time.time()
         self._servo_vertical.stop()
         self._servo_horizontal.forward()
 
-    def right(self):
+    def right(self) -> None:
         self._start_time = time.time()
         self._servo_vertical.stop()
         self._servo_horizontal.backward()
 
-    def center(self):
+    def center(self) -> None:
         self._servo_vertical.center()
         self._servo_horizontal.center()
 
-    def stop(self):
+    def stop(self) -> None:
         self._servo_vertical.stop()
         self._servo_horizontal.stop()
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         self._servo_horizontal.cleanup()
         self._servo_vertical.cleanup()

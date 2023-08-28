@@ -10,6 +10,7 @@ python = "^3.9"
 rpi-gpio = {version = "^0.7.1", platform = "linux"}
 paho-mqtt = "^1.6.1"
 fake-rpi = "^0.7.1"
+gpiozero = "^1.6.2"
 
 
 [build-system]
