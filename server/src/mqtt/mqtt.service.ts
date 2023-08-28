@@ -31,4 +31,11 @@ export class MqttService {
       direction,
     });
   }
+
+  stream(action: string): void {
+    this.client.emit(this.topicName, {
+      type: 'stream',
+      action,
+    });
+  }
 }

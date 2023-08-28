@@ -2,10 +2,14 @@ from messages.message import Message
 
 
 class Movement(Message):
-    TYPE = 'movement'
+    TYPE: str = 'movement'
 
     def __init__(self, direction: str, **kwargs):
-        self._direction = direction
+        self._direction: str = direction
 
-    def direction(self):
+    @property
+    def direction(self) -> str:
         return self._direction
+
+    def __repr__(self) -> str:
+        return f"Movement(direction={self._direction})"

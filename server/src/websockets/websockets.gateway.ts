@@ -18,4 +18,9 @@ export class WebsocketsGateway {
   handleGimbal(@MessageBody('direction') direction: string) {
     this.mqttService.gimbal(direction);
   }
+
+  @SubscribeMessage('stream')
+  handleStream(@MessageBody('action') action: string) {
+    this.mqttService.stream(action);
+  }
 }

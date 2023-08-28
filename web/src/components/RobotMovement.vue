@@ -109,3 +109,9 @@ function stopAll(): void {
 <template>
   <div />
 </template>
+
+<style scoped>
+div {
+  display: none;
+}
+</style>
