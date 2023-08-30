@@ -73,6 +73,5 @@ if __name__ == '__main__':
         mqtt_service.loop_forever()
     except KeyboardInterrupt:
         movement.cleanup()
-        gimbal.cleanup()
         GPIO.cleanup()
         mqtt_service.disconnect()

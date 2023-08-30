@@ -6,8 +6,8 @@ from commands.gimbal.servo import Servo
 
 class Gimbal:
     def __init__(self, gpio: ModuleType, timeout: float):
-        self._servo_horizontal: Servo = Servo(servo_pin=23)
-        self._servo_vertical: Servo = Servo(servo_pin=9, min_angle=40)
+        self._servo_horizontal: Servo = Servo(servo_pin=23, step=3)
+        self._servo_vertical: Servo = Servo(servo_pin=9, min_angle=-55, max_angle=85)
         self._timeout: float = timeout
         self._start_time = time.time()
         self._thread = threading.Thread(target=self._gimbal_thread, daemon=True)
@@ -20,7 +20,7 @@ class Gimbal:
             else:
                 self._servo_horizontal.continue_movement()
                 self._servo_vertical.continue_movement()
-            time.sleep(0.1)
+            time.sleep(0.05)
 
     def up(self) -> None:
         self._start_time = time.time()
@@ -69,7 +69,3 @@ class Gimbal:
     def stop(self) -> None:
         self._servo_vertical.stop()
         self._servo_horizontal.stop()
-
-    def cleanup(self) -> None:
-        self._servo_horizontal.cleanup()
-        self._servo_vertical.cleanup()

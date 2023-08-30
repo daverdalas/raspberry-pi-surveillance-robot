@@ -75,3 +75,4 @@ STOPSIGNAL SIGKILL
 EXPOSE 8888
 
 ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["tail", "-f", "/dev/null"]
