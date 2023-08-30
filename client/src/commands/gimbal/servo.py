@@ -13,18 +13,18 @@ class Servo:
             correction: float = 0.45,
             step: int = 2,
     ):
-        self._servo = AngularServo(
-            servo_pin,
+        self._servo: AngularServo = AngularServo(
+            pin=servo_pin,
             initial_angle=start_angle,
             min_pulse_width=(1.0 - correction) / 1000,
             max_pulse_width=(2.0 + correction) / 1000,
         )
-        self._current_angle = start_angle
-        self._start_angle = start_angle
-        self._min_angle = min_angle
-        self._max_angle = max_angle
-        self._current_direction = Direction.STOP
-        self._step = step
+        self._current_angle: float = start_angle
+        self._start_angle: int = start_angle
+        self._min_angle: int = min_angle
+        self._max_angle: int = max_angle
+        self._current_direction: Direction = Direction.STOP
+        self._step: int = step
 
     def continue_movement(self) -> None:
         if self._current_direction == Direction.FORWARD:
@@ -42,14 +42,12 @@ class Servo:
         self._set_angle(self._start_angle)
 
     def stop(self) -> None:
-        self._servo.detach()  # Detach the servo to stop it
         self._current_direction = Direction.STOP
 
     def _set_angle(self, angle) -> None:
         angle = min(max(angle, self._min_angle), self._max_angle)
         if angle == self._current_angle:
             return
-        print(angle)
         try:
             self._servo.angle = angle
         except PinInvalidState:

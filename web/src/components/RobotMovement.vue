@@ -4,7 +4,8 @@ import { socket } from '@/socket'
 
 let intervalId: number | null = null
 let keysPressed = new Set<string>()
-const timeout: number = (import.meta.env.VITE_NEXT_MESSAGE_MAX_WAIT_TIME as number) / 2
+const messageInterval: number = (import.meta.env.VITE_NEXT_MESSAGE_MAX_WAIT_TIME as number) / 2
+const timeout: number = 600
 let lastKeyActionTimestamp = 0
 
 onMounted((): void => {
@@ -23,11 +24,12 @@ onUnmounted((): void => {
 
 function handleKeydown(e: KeyboardEvent): void {
   keysPressed.add(e.key)
+  console.log(Date.now() - lastKeyActionTimestamp)
   lastKeyActionTimestamp = Date.now()
 
   if (!intervalId) {
     sendDirections()
-    intervalId = setInterval(pollingCheck, timeout)
+    intervalId = setInterval(pollingCheck, messageInterval)
   }
 }
 
@@ -51,6 +53,7 @@ function pollingCheck(): void {
 
   // If no key event was recorded for a duration longer than the timeout, stop everything
   if (elapsedTime >= timeout) {
+    console.log('timeout')
     stopAll()
     return
   }

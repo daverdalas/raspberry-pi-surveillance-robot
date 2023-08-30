@@ -1,16 +1,15 @@
 import time
 import threading
-from types import ModuleType
 from commands.gimbal.servo import Servo
 
 
 class Gimbal:
-    def __init__(self, gpio: ModuleType, timeout: float):
-        self._servo_horizontal: Servo = Servo(servo_pin=23, step=3)
+    def __init__(self, timeout: float):
+        self._servo_horizontal: Servo = Servo(servo_pin=23, step=3, start_angle=10)
         self._servo_vertical: Servo = Servo(servo_pin=9, min_angle=-55, max_angle=85)
         self._timeout: float = timeout
-        self._start_time = time.time()
-        self._thread = threading.Thread(target=self._gimbal_thread, daemon=True)
+        self._start_time: float = time.time()
+        self._thread: threading.Thread = threading.Thread(target=self._gimbal_thread, daemon=True)
         self._thread.start()
 
     def _gimbal_thread(self) -> None:
@@ -63,6 +62,7 @@ class Gimbal:
         self._servo_horizontal.backward()
 
     def center(self) -> None:
+        self._start_time = time.time()
         self._servo_vertical.center()
         self._servo_horizontal.center()
 

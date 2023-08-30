@@ -1,18 +1,6 @@
 import os
-import sys
 from typing import Any
 import logging
-
-try:
-    import RPi.GPIO as GPIO
-except (RuntimeError, ModuleNotFoundError):
-    import fake_rpi
-
-    sys.modules['RPi'] = fake_rpi.RPi  # Fake RPi
-    sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO  # Fake GPIO
-    sys.modules['smbus'] = fake_rpi.smbus  # Fake smbus (I2C)
-    import RPi.GPIO as GPIO
-
 from mqtt_service import MQTTService
 from commands.movement.movement import Movement
 from commands.gimbal.gimbal import Gimbal
@@ -50,8 +38,8 @@ def _on_message(client: Any, userdata: Any, msg: Any) -> None:
 
 if __name__ == '__main__':
     timeout = int(os.getenv('NEXT_MESSAGE_MAX_WAIT_TIME')) / 1000
-    movement = Movement(gpio=GPIO, timeout=timeout)
-    gimbal = Gimbal(gpio=GPIO, timeout=timeout)
+    movement = Movement(timeout=timeout)
+    gimbal = Gimbal(timeout=timeout)
     streamer = Streamer(
         stream_host=os.getenv('STREAM_HOST'),
         username=os.getenv('STREAM_AUTHORIZATION_USERNAME'),
@@ -72,6 +60,5 @@ if __name__ == '__main__':
     try:
         mqtt_service.loop_forever()
     except KeyboardInterrupt:
-        movement.cleanup()
-        GPIO.cleanup()
         mqtt_service.disconnect()
+        movement.cleanup()

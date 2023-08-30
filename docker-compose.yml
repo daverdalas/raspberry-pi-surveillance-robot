@@ -58,6 +58,7 @@ services:
         - NEXT_MESSAGE_MAX_WAIT_TIME=${NEXT_MESSAGE_MAX_WAIT_TIME}
         - WEBSOCKET_HOST=${WEBSOCKET_HOST}
         - WEBSOCKET_PORT=${WEBSOCKET_PORT}
+        - SERVER_HOSTNAME=${SERVER_HOSTNAME}
     env_file:
       - ./.env
       - ./web/.env.docker
