@@ -16,9 +16,12 @@ services:
       - ./client/.env.docker
     build:
       context: ./client
+      target: ${ENVIRONMENT}
     networks:
       - emqx-bridge
       - srs
+    ports:
+      - "8888:8888"
     volumes:
       - ./client:/app:cached
     devices:

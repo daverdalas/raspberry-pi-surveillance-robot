@@ -1,4 +1,4 @@
-FROM python:3.11-alpine
+FROM python:alpine3.18 AS build
 
 ENV PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
@@ -19,11 +19,17 @@ RUN apk update && apk add --no-cache  \
     pkgconfig \
     opus-dev \
     x264-dev
-
-RUN cargo install watchexec-cli
-RUN cp /root/.cargo/bin/watchexec /bin
-
 RUN pip install "poetry==$POETRY_VERSION"
+
+RUN wget --output-document=download.zip https://github.com/joan2937/pigpio/archive/master.zip \
+    # Downloaded content is placed inside specific folder to not be depended of branch naming from repo
+    && mkdir download \
+    && unzip -d download download.zip \
+    && cd /download/* \
+    # Fix for compiling on Alpine, https://github.com/joan2937/pigpio/issues/107
+    && sed -i -e 's/ldconfig/echo ldconfig disabled/g' Makefile \
+    && make \
+    && make install
 
 WORKDIR /usr/local/src
 # Install ffmpeg with WHIP support
@@ -48,11 +54,24 @@ RUN cd ffmpeg-webrtc && make -j10
 WORKDIR /app
 
 COPY poetry.lock pyproject.toml /app/
-COPY src /app/src
 
 RUN poetry config virtualenvs.create false \
-  && poetry install --no-interaction --no-ansi
+  && poetry install --no-interaction --no-ansi --no-root
 
 COPY . /app
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+FROM build as local
+
+RUN cargo install watchexec-cli
+RUN cp /root/.cargo/bin/watchexec /bin
+
+ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+FROM build as production
+
+STOPSIGNAL SIGKILL
+EXPOSE 8888
+
+ENTRYPOINT ["/app/entrypoint.sh"]
