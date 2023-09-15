@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 import { socket } from '@/socket'
+import type Movement from '@core/types/socket/Movement'
+import type Gimbal from '@core/types/socket/Gimbal'
 
 let intervalId: number | null = null
 let keysPressed = new Set<string>()
@@ -24,7 +26,6 @@ onUnmounted((): void => {
 
 function handleKeydown(e: KeyboardEvent): void {
   keysPressed.add(e.key)
-  console.log(Date.now() - lastKeyActionTimestamp)
   lastKeyActionTimestamp = Date.now()
 
   if (!intervalId) {
@@ -38,14 +39,16 @@ function handleKeyup(e: KeyboardEvent): void {
   lastKeyActionTimestamp = Date.now()
 
   if (e.key === 'c') {
-    socket.emit('gimbal', { direction: 'center' })
+    socket.emit('gimbal', { vertical: 0, horizontal: 0, center: true })
   }
 
   if (keysPressed.size === 0) {
     stopAll()
-  } else {
-    sendDirections()
+
+    return
   }
+
+  sendDirections()
 }
 
 function pollingCheck(): void {
@@ -53,7 +56,6 @@ function pollingCheck(): void {
 
   // If no key event was recorded for a duration longer than the timeout, stop everything
   if (elapsedTime >= timeout) {
-    console.log('timeout')
     stopAll()
     return
   }
@@ -68,44 +70,99 @@ function sendDirections(): void {
 
 function sendMovementDirection(): void {
   const direction = movementDirection()
+
   if (direction) {
-    socket.emit('movement', { direction })
+    socket.emit('movement', direction)
   }
 }
 
 function sendGimbalDirection(): void {
   const direction = gimbalDirection()
+
   if (direction) {
-    socket.emit('gimbal', { direction })
+    socket.emit('gimbal', direction)
   }
 }
 
-function movementDirection(): string | null {
-  return directions('ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight')
+function movementDirection(): Movement | null {
+  const direction = determineDirection('ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight')
+
+  const movementMapping: { [key in Direction]: Movement } = {
+    [Direction.UP]: { left: 0.25, right: 0.25 },
+    [Direction.DOWN]: { left: -0.25, right: -0.25 },
+    [Direction.LEFT]: { left: -0.25, right: 0.25 },
+    [Direction.RIGHT]: { left: 0.25, right: -0.25 },
+    [Direction.UP_LEFT]: { left: 0.065, right: 0.25 },
+    [Direction.UP_RIGHT]: { left: 0.25, right: 0.065 },
+    [Direction.DOWN_LEFT]: { left: -0.065, right: -0.25 },
+    [Direction.DOWN_RIGHT]: { left: -0.25, right: -0.065 }
+  }
+
+  return direction !== null ? movementMapping[direction] : null
 }
 
-function gimbalDirection(): string | null {
-  return directions('w', 's', 'a', 'd')
+function gimbalDirection(): Gimbal | null {
+  const direction = determineDirection('w', 's', 'a', 'd')
+
+  const movementMapping: { [key in Direction]: Gimbal } = {
+    [Direction.UP]: { horizontal: 0, vertical: 2 },
+    [Direction.DOWN]: { horizontal: 0, vertical: -2 },
+    [Direction.LEFT]: { horizontal: 3, vertical: 0 },
+    [Direction.RIGHT]: { horizontal: -3, vertical: 0 },
+    [Direction.UP_LEFT]: { horizontal: 3, vertical: 2 },
+    [Direction.UP_RIGHT]: { horizontal: -3, vertical: 2 },
+    [Direction.DOWN_LEFT]: { horizontal: 3, vertical: -2 },
+    [Direction.DOWN_RIGHT]: { horizontal: -3, vertical: -2 }
+  }
+
+  return direction !== null ? movementMapping[direction] : null
 }
 
-function directions(
+enum Direction {
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT,
+  UP_LEFT,
+  UP_RIGHT,
+  DOWN_LEFT,
+  DOWN_RIGHT
+}
+
+function determineDirection(
   upKey: string,
   downKey: string,
   leftKey: string,
   rightKey: string
-): string | null {
-  const vertical = keysPressed.has(upKey) ? 'up' : keysPressed.has(downKey) ? 'down' : ''
-  const horizontal = keysPressed.has(leftKey) ? 'left' : keysPressed.has(rightKey) ? 'right' : ''
+): Direction | null {
+  const vertical = keysPressed.has(upKey)
+    ? Direction.UP
+    : keysPressed.has(downKey)
+    ? Direction.DOWN
+    : null
+  const horizontal = keysPressed.has(leftKey)
+    ? Direction.LEFT
+    : keysPressed.has(rightKey)
+    ? Direction.RIGHT
+    : null
 
-  return [vertical, horizontal].filter(Boolean).join('_') || null
+  if (vertical === null && horizontal === null) {
+    return null
+  }
+
+  if (vertical !== null && horizontal !== null) {
+    return Direction[`${Direction[vertical]}_${Direction[horizontal]}` as keyof typeof Direction]
+  }
+
+  return vertical !== null ? vertical : horizontal
 }
 
 function stopAll(): void {
   clearInterval(intervalId!)
   intervalId = null
 
-  socket.emit('movement', { direction: 'stop' })
-  socket.emit('gimbal', { direction: 'stop' })
+  socket.emit('movement', { left: 0, right: 0 })
+  socket.emit('gimbal', { horizontal: 0, vertical: 0 })
 }
 </script>
 

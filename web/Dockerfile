@@ -1,3 +1,5 @@
+FROM core:latest AS core
+
 FROM node:20.5-alpine AS build
 
 RUN apk update && apk add --no-cache \
@@ -19,6 +21,8 @@ WORKDIR /app
 COPY --chown=node:node package*.json ./
 
 RUN npm ci
+
+COPY --chown=node:node --from=core ./ /core
 
 COPY --chown=node:node . .
 

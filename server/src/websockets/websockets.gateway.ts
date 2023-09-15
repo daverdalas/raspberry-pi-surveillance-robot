@@ -4,23 +4,26 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { MqttService } from '../mqtt/mqtt.service';
+import type Stream from '@core/types/socket/Stream';
+import type Movement from '@core/types/socket/Movement';
+import Gimbal from '@core/types/socket/Gimbal';
 
 @WebSocketGateway()
 export class WebsocketsGateway {
   constructor(private readonly mqttService: MqttService) {}
 
   @SubscribeMessage('movement')
-  handleEvent(@MessageBody('direction') direction: string) {
-    this.mqttService.movement(direction);
+  handleEvent(@MessageBody() movement: Movement) {
+    this.mqttService.movement(movement);
   }
 
   @SubscribeMessage('gimbal')
-  handleGimbal(@MessageBody('direction') direction: string) {
-    this.mqttService.gimbal(direction);
+  handleGimbal(@MessageBody() gimbal: Gimbal) {
+    this.mqttService.gimbal(gimbal);
   }
 
   @SubscribeMessage('stream')
-  handleStream(@MessageBody('action') action: string) {
-    this.mqttService.stream(action);
+  handleStream(@MessageBody() data: Stream) {
+    this.mqttService.stream(data.action);
   }
 }

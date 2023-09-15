@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import providers from './providers';
+import Movement from '@core/types/socket/Movement';
+import Gimbal from '@core/types/socket/Gimbal';
 
 @Injectable()
 export class MqttService {
@@ -18,17 +20,17 @@ export class MqttService {
     await this.client.connect();
   }
 
-  movement(direction: string): void {
+  movement(movement: Movement): void {
     this.client.emit(this.topicName, {
       type: 'movement',
-      direction,
+      ...movement,
     });
   }
 
-  gimbal(direction: string): void {
+  gimbal(gimbal: Gimbal): void {
     this.client.emit(this.topicName, {
       type: 'gimbal',
-      direction,
+      ...gimbal,
     });
   }
 

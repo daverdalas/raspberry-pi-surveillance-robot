@@ -4,7 +4,6 @@ services:
   server:
     ports:
       - "3000:3000"
-    volumes: []
   web:
     ports:
       - "80:80"

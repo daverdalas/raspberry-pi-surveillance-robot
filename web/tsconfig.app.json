@@ -6,7 +6,13 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@core/*": ["./../core/src/*"]
     }
-  }
+  },
+  "references": [
+      {
+        "path": "./../core"
+      }
+  ]
 }

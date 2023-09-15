@@ -11,8 +11,8 @@ class Servo:
             max_angle: int = 90,
             start_angle: int = 0,
             correction: float = 0.45,
-            step: int = 2,
     ):
+        self._step = None
         self._servo: AngularServo = AngularServo(
             pin=servo_pin,
             initial_angle=start_angle,
@@ -24,7 +24,6 @@ class Servo:
         self._min_angle: int = min_angle
         self._max_angle: int = max_angle
         self._current_direction: Direction = Direction.STOP
-        self._step: int = step
 
     def continue_movement(self) -> None:
         if self._current_direction == Direction.FORWARD:
@@ -32,10 +31,12 @@ class Servo:
         elif self._current_direction == Direction.BACKWARD:
             self._set_angle(self._current_angle - self._step)
 
-    def forward(self) -> None:
+    def forward(self, step: int) -> None:
+        self._step = step
         self._current_direction = Direction.FORWARD
 
-    def backward(self) -> None:
+    def backward(self, step: int) -> None:
+        self._step = step
         self._current_direction = Direction.BACKWARD
 
     def center(self) -> None:

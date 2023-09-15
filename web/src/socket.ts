@@ -1,21 +1,18 @@
 import { reactive } from 'vue'
 import { io, Socket } from 'socket.io-client'
+import type { ClientToServerEvents, ServerToClientEvents } from '@core/types/socket/Events'
 
 interface State {
   connected: boolean
-  fooEvents: Array<any>
-  barEvents: Array<any>
 }
 
 export const state: State = reactive({
-  connected: false,
-  fooEvents: [],
-  barEvents: []
+  connected: false
 })
 
 const URL: string = import.meta.env.VITE_WEBSOCKET_URL as string
 
-export const socket: Socket = io(URL)
+export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(URL)
 
 socket.on('connect', () => {
   state.connected = true

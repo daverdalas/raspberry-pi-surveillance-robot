@@ -15,6 +15,22 @@ class Movement:
         self._thread = threading.Thread(target=self._movement_thread, daemon=True)
         self._thread.start()
 
+    def __call__(self, left: float, right: float) -> None:
+        self._set_motor_movement(self._motor_left, left)
+        self._set_motor_movement(self._motor_right, right)
+
+    def _set_motor_movement(self, motor: Motor, speed: float) -> None:
+        self._start_time = time.time()
+        if speed > 0:
+            motor.forward(abs(speed))
+
+            return
+        if speed < 0:
+            motor.backward(abs(speed))
+
+            return
+        motor.stop()
+
     def _movement_thread(self) -> None:
         while True:
             if time.time() - self._start_time >= self._timeout:
@@ -24,51 +40,6 @@ class Movement:
                 self._motor_left.continue_movement()
                 self._motor_right.continue_movement()
             time.sleep(0.05)
-
-    def up(self):
-        self._start_time = time.time()
-        self._motor_left.forward(self._REGULAR_SPEED)
-        self._motor_right.forward(self._REGULAR_SPEED)
-
-    def up_left(self):
-        self._start_time = time.time()
-        self._motor_left.forward(self._REDUCED_SPEED)
-        self._motor_right.forward(self._REGULAR_SPEED)
-
-    def up_right(self):
-        self._start_time = time.time()
-        self._motor_left.forward(self._REGULAR_SPEED)
-        self._motor_right.forward(self._REDUCED_SPEED)
-
-    def down(self):
-        self._start_time = time.time()
-        self._motor_left.backward(self._REGULAR_SPEED)
-        self._motor_right.backward(self._REGULAR_SPEED)
-
-    def down_left(self):
-        self._start_time = time.time()
-        self._motor_left.backward(self._REDUCED_SPEED)
-        self._motor_right.backward(self._REGULAR_SPEED)
-
-    def down_right(self):
-        self._start_time = time.time()
-        self._motor_left.backward(self._REGULAR_SPEED)
-        self._motor_right.backward(self._REDUCED_SPEED)
-
-    def left(self):
-        self._start_time = time.time()
-        self._motor_left.backward(self._REGULAR_SPEED)
-        self._motor_right.forward(self._REGULAR_SPEED)
-
-    def right(self):
-        self._start_time = time.time()
-        self._motor_left.forward(self._REGULAR_SPEED)
-        self._motor_right.backward(self._REGULAR_SPEED)
-
-    def stop(self):
-        self._start_time = time.time()
-        self._motor_left.stop()
-        self._motor_right.stop()
 
     def cleanup(self):
         self._motor_left.cleanup()

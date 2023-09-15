@@ -8,8 +8,8 @@ const started = ref(false)
 
 async function startStream(): Promise<void> {
   started.value = true
-  socket.emit('stream', { action: 'start' });
-  await nextTick();
+  socket.emit('stream', { action: 'start' })
+  await nextTick()
   const player = new WebRTCPlayer({
     video: video.value as HTMLVideoElement,
     type: 'whep'
@@ -19,12 +19,7 @@ async function startStream(): Promise<void> {
 </script>
 
 <template>
-  <button
-    type="button"
-    v-if="!started"
-    @click="startStream">
-    Start
-  </button>
+  <button type="button" v-if="!started" @click="startStream">Start</button>
   <video v-else ref="video" autoplay muted controls playsinline></video>
 </template>
 
@@ -43,7 +38,6 @@ button {
   text-transform: uppercase;
   color: #fff;
   background-color: #0d6efd;
-  border-color: #0d6efd;
   display: inline-block;
   font-weight: bold;
   line-height: 1.5;
@@ -51,13 +45,16 @@ button {
   border: 1px solid transparent;
   padding: 8px 14px;
   font-size: 1.4rem;
-  border-radius: .25rem;
-  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  border-radius: 0.25rem;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
   :hover {
-      color: #fff;
-      background-color: #0b5ed7;
-      border-color: #0a58ca;
+    color: #fff;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
   }
-
 }
 </style>

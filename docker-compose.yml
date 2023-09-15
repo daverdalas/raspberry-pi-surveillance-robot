@@ -35,6 +35,24 @@ services:
       - vol-emqx-data:/opt/emqx/data
       - vol-emqx-etc:/opt/emqx/etc
       - vol-emqx-log:/opt/emqx/log
+  srs:
+    image: ossrs/srs:5
+    restart: unless-stopped
+    command: objs/srs -c conf/rtc.conf
+    env_file:
+      - ./.env
+    ports:
+      - "1935:1935"
+      - "1985:1985"
+      - "8080:8080"
+      - "8000:8000/udp"
+    networks:
+      - backend
+      - srs
+  core:
+    build:
+      context: ./core
+    image: core:latest
   server:
     build:
       context: ./server
@@ -47,7 +65,7 @@ services:
     networks:
         - emqx-bridge
         - backend
-    links:
+    depends_on:
       - emqx
   web:
     build:
@@ -67,17 +85,3 @@ services:
     networks:
         - backend
         - srs
-  srs:
-    image: ossrs/srs:5
-    restart: unless-stopped
-    command: objs/srs -c conf/rtc.conf
-    env_file:
-      - ./.env
-    ports:
-      - "1935:1935"
-      - "1985:1985"
-      - "8080:8080"
-      - "8000:8000/udp"
-    networks:
-      - backend
-      - srs

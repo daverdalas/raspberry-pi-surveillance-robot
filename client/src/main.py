@@ -15,10 +15,14 @@ def _on_message(client: Any, userdata: Any, msg: Any) -> None:
     message = messages.Message.from_json(msg.payload)
 
     if isinstance(message, messages.Movement):
-        service = movement
-    elif isinstance(message, messages.Gimbal):
-        service = gimbal
-    elif isinstance(message, messages.Stream):
+        movement(message.left, message.right)
+
+        return
+    if isinstance(message, messages.Gimbal):
+        gimbal(message.horizontal, message.vertical, message.center)
+
+        return
+    if isinstance(message, messages.Stream):
         if message.is_start():
             streamer.start()
         elif message.is_stop():
@@ -27,14 +31,6 @@ def _on_message(client: Any, userdata: Any, msg: Any) -> None:
     else:
         logger.error(f'Unknown message type: {type(message).__name__}')
         return
-
-    direction = message.direction
-    action = getattr(service, direction, None)
-    if action:
-        action()
-    else:
-        logger.error(f'Unknown direction: {direction}')
-
 
 if __name__ == '__main__':
     timeout = int(os.getenv('NEXT_MESSAGE_MAX_WAIT_TIME')) / 1000
