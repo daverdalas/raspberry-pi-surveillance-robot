@@ -59,7 +59,6 @@ services:
       target: ${ENVIRONMENT}
     env_file:
       - ./.env
-      - ./server/.env.docker
     ports:
       - "3000:3000"
     networks:
@@ -79,7 +78,6 @@ services:
         - SERVER_HOSTNAME=${SERVER_HOSTNAME}
     env_file:
       - ./.env
-      - ./web/.env.docker
     ports:
       - "80:80"
     networks:

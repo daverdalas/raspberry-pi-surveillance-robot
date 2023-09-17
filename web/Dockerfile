@@ -10,11 +10,9 @@ RUN apk update && apk add --no-cache \
 
 USER node
 
-ARG OSSRS_HOST
-ARG NEXT_MESSAGE_MAX_WAIT_TIME
-ARG WEBSOCKET_HOST
-ARG WEBSOCKET_PORT
-ARG SERVER_HOSTNAME
+ARG VITE_STREAM_URL
+ARG VITE_NEXT_MESSAGE_MAX_WAIT_TIME
+ARG VITE_WEBSOCKET_URL
 
 WORKDIR /app
 
@@ -25,8 +23,6 @@ RUN npm ci
 COPY --chown=node:node --from=core ./ /core
 
 COPY --chown=node:node . .
-
-COPY --chown=node:node .env.docker .env
 
 RUN npm run build
 

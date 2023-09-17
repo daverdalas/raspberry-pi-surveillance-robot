@@ -20,7 +20,7 @@ async function startStream(): Promise<void> {
 
 <template>
   <button type="button" v-if="!started" @click="startStream">Start</button>
-  <video v-else ref="video" autoplay muted controls playsinline></video>
+  <video v-else ref="video" autoplay muted playsinline></video>
 </template>
 
 <style scoped>

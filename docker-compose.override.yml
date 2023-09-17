@@ -15,7 +15,6 @@ services:
     privileged: true
     env_file:
       - ./.env
-      - ./client/.env.docker
     build:
       context: ./client
       target: ${ENVIRONMENT}
