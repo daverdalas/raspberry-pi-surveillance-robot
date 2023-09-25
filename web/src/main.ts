@@ -3,8 +3,14 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-const app = createApp(App)
+import { faPause, faPlay, faExpand, faCompress } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faPause, faPlay, faExpand, faCompress)
+
+const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon)
 
 app.use(router)
 
