@@ -5,6 +5,8 @@ import { socket } from '@/socket'
 import type Movement from '@core/types/socket/Movement'
 import type Gimbal from '@core/types/socket/Gimbal'
 import { isEqual } from 'lodash'
+import Mobile from '@/components/RobotMovement/Mobile.vue'
+import { isMobile } from '@/state'
 
 const interval: number = (import.meta.env.VITE_NEXT_MESSAGE_MAX_WAIT_TIME as number) / 2
 
@@ -54,7 +56,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Keyboard @gimbal="gimbal" @movement="movement" />
+  <Mobile v-if="isMobile" @movement="movement" />
+  <Keyboard v-else @gimbal="gimbal" @movement="movement" />
 </template>
 
 <style scoped>
