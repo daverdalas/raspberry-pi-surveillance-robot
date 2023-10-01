@@ -5,10 +5,16 @@ import App from '@/App.vue'
 import router from '@/router'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faPause, faPlay, faExpand, faCompress } from '@fortawesome/free-solid-svg-icons'
+import {
+  faPause,
+  faPlay,
+  faExpand,
+  faCompress,
+  faArrowsToDot
+} from '@fortawesome/free-solid-svg-icons'
 import { isMobile } from '@/state'
 
-library.add(faPause, faPlay, faExpand, faCompress)
+library.add(faPause, faPlay, faExpand, faCompress, faArrowsToDot)
 
 const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon)
 

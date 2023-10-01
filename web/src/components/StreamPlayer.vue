@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { WebRTCPlayer } from '@eyevinn/webrtc-player'
-import { nextTick, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import { socket } from '@/socket'
 
 const video = ref<HTMLVideoElement | null>(null)
-const started = ref(false)
 const playing = ref(true)
 const videoCover = ref(false)
 
+onMounted(() => {
+  startStream()
+})
+
 async function startStream(): Promise<void> {
-  started.value = true
   socket.emit('stream', { action: 'start' })
   await nextTick()
   const player = new WebRTCPlayer({
@@ -32,8 +34,7 @@ function togglePlay(): void {
 </script>
 
 <template>
-  <button class="start-button" type="button" v-if="!started" @click="startStream">Start</button>
-  <div v-else class="stream-container">
+  <div class="stream-container">
     <video
       class="stream-container__video"
       :class="{ 'stream-container__video--cover': videoCover }"
@@ -56,37 +57,6 @@ function togglePlay(): void {
 </template>
 
 <style scoped lang="scss">
-button.start-button {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  outline: 0;
-  text-transform: uppercase;
-  color: #fff;
-  background-color: #0d6efd;
-  display: inline-block;
-  font-weight: bold;
-  line-height: 1.5;
-  text-align: center;
-  border: 1px solid transparent;
-  padding: 8px 14px;
-  font-size: 1.4rem;
-  border-radius: 0.25rem;
-  transition:
-    color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
-
-  :hover {
-    color: #fff;
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
-  }
-}
-
 .stream-container {
   position: relative;
   width: 100vw;
@@ -118,8 +88,8 @@ button.start-button {
 
     svg {
       display: block;
-      width: 30px;
-      height: 30px;
+      width: 25px;
+      height: 25px;
     }
   }
 }

@@ -101,6 +101,10 @@ function initGimbal(): void {
   })
 }
 
+function centerGimbal(): void {
+  emit('gimbal', { horizontal: 0, vertical: 0, center: true })
+}
+
 function emitMovementDirection(): void {
   const maxSpeed = 0.3,
     minSpeed = 0.065
@@ -142,7 +146,11 @@ onUnmounted(() => {
 
 <template>
   <div id="left-right-zone" class="zone" ref="leftRightZone" />
-  <div id="gimbal-zone" class="zone" ref="gimbalZone" />
+  <div id="gimbal-zone" class="zone" ref="gimbalZone">
+    <div id="center-button" @click="centerGimbal">
+      <font-awesome-icon :icon="['fas', 'arrows-to-dot']" />
+    </div>
+  </div>
   <div id="up-down-zone" class="zone" ref="upDownZone" />
 </template>
 
@@ -167,5 +175,22 @@ onUnmounted(() => {
 #gimbal-zone {
   top: 0;
   right: 0;
+}
+
+#center-button {
+  position: absolute;
+  top: 90px;
+  right: 15px;
+  font-size: 1.3em;
+  background: rgb(128, 128, 128);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid red;
+  opacity: 0.4;
+  z-index: 1;
 }
 </style>

@@ -10,7 +10,7 @@ import { isMobile } from '@/state'
 
 const interval: number = (import.meta.env.VITE_NEXT_MESSAGE_MAX_WAIT_TIME as number) / 2
 
-const STOP_GIMBAL: Gimbal = { vertical: 0, horizontal: 0, center: false }
+const STOP_GIMBAL: Gimbal = { vertical: 0, horizontal: 0 }
 const STOP_MOVEMENT: Movement = { left: 0, right: 0 }
 
 let lastGimbalEvent: Gimbal = STOP_GIMBAL
