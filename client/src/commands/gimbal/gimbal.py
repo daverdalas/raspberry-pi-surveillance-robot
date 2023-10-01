@@ -12,11 +12,11 @@ class Gimbal:
         self._thread: threading.Thread = threading.Thread(target=self._gimbal_thread, daemon=True)
         self._thread.start()
 
-    def __call__(self, horizontal: int, vertical: int, center: bool) -> None:
+    def __call__(self, horizontal: float, vertical: float, center: bool) -> None:
         self._set_servo_movement(self._servo_horizontal, horizontal, center)
         self._set_servo_movement(self._servo_vertical, vertical, center)
 
-    def _set_servo_movement(self, servo: Servo, step: int, center: bool) -> None:
+    def _set_servo_movement(self, servo: Servo, step: float, center: bool) -> None:
         self._start_time = time.time()
         if center:
             servo.center()

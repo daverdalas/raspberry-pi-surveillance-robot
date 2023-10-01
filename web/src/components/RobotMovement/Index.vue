@@ -56,7 +56,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Mobile v-if="isMobile" @movement="movement" />
+  <Mobile v-if="isMobile" @gimbal="gimbal" @movement="movement" />
   <Keyboard v-else @gimbal="gimbal" @movement="movement" />
 </template>
 

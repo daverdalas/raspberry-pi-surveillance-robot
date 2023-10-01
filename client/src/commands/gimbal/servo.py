@@ -31,11 +31,11 @@ class Servo:
         elif self._current_direction == Direction.BACKWARD:
             self._set_angle(self._current_angle - self._step)
 
-    def forward(self, step: int) -> None:
+    def forward(self, step: float) -> None:
         self._step = step
         self._current_direction = Direction.FORWARD
 
-    def backward(self, step: int) -> None:
+    def backward(self, step: float) -> None:
         self._step = step
         self._current_direction = Direction.BACKWARD
 
