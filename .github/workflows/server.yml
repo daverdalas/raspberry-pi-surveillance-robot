@@ -1,0 +1,46 @@
+name: server
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+    paths:
+      - 'server/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.5'
+          cache: 'npm'
+          cache-dependency-path: ./server/package-lock.json
+      - name: Install dependencies
+        working-directory: ./server
+        run: npm ci
+      - name: Lint
+        working-directory: ./server
+        run: npm run lint:check
+  prettier-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.5'
+          cache: 'npm'
+          cache-dependency-path: ./server/package-lock.json
+      - name: Install dependencies
+        working-directory: ./server
+        run: npm ci
+      - name: Prettier check
+        working-directory: ./server
+        run: npm run format:check

@@ -49,6 +49,7 @@ server-lint:
 
 web-lint:
 	${COMPOSE} exec web npm run lint
+	${COMPOSE} exec web npm run type-check
 
 format: server-format web-format
 
