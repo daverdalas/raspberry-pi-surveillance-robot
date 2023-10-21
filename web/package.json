@@ -9,7 +9,9 @@
     "build-only": "vite build",
     "type-check": "tsc -p ../core/tsconfig.json && vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "lint-check": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
+    "format": "prettier --write src/",
+    "format-check": "prettier --check src/"
   },
   "dependencies": {
     "@eyevinn/webrtc-player": "^0.11.2",
