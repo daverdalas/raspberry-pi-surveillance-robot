@@ -15,18 +15,12 @@ async function setupFullScreenAndLockOrientation(): Promise<void> {
   try {
     // Go full screen
     const elem = document.documentElement
-    if (elem.requestFullscreen) {
-      await elem.requestFullscreen()
-    } else if (elem.mozRequestFullScreen) {
-      // Firefox
-      await elem.mozRequestFullScreen()
-    } else if (elem.webkitRequestFullscreen) {
-      // Chrome, Safari and Opera
-      await elem.webkitRequestFullscreen()
-    } else if (elem.msRequestFullscreen) {
-      // IE/Edge
-      await elem.msRequestFullscreen()
-    }
+    const methodToBeInvoked =
+      elem.requestFullscreen || // @ts-ignore
+      elem.mozRequestFullScreen || // @ts-ignore
+      elem.webkitRequestFullscreen || // @ts-ignore
+      elem.msRequestFullscreen
+    await methodToBeInvoked.call(elem)
 
     // Lock screen orientation
     await screen.orientation.lock('landscape-primary')
