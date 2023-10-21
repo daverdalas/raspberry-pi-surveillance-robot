@@ -6,12 +6,12 @@ import { isMobile, started } from '@/state'
 function start(): void {
   started.value = true
 
-  if (isMobile) {
+  if (isMobile.value) {
     setupFullScreenAndLockOrientation()
   }
 }
 
-async function setupFullScreenAndLockOrientation() {
+async function setupFullScreenAndLockOrientation(): Promise<void> {
   try {
     // Go full screen
     const elem = document.documentElement

@@ -1,6 +1,8 @@
 import os
 from typing import Any
 import logging
+import threading
+import time
 from mqtt_service import MQTTService
 from commands.movement.movement import Movement
 from commands.gimbal.gimbal import Gimbal
@@ -12,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 def _on_message(client: Any, userdata: Any, msg: Any) -> None:
+    global last_message_time
+    last_message_time = time.time()
     message = messages.Message.from_json(msg.payload)
 
     if isinstance(message, messages.Movement):
@@ -32,10 +36,19 @@ def _on_message(client: Any, userdata: Any, msg: Any) -> None:
         logger.error(f'Unknown message type: {type(message).__name__}')
         return
 
+
+def _check_last_message_time() -> None:
+    while True:
+        time.sleep(10)
+        if last_message_time and time.time() - last_message_time > 60 * 5:
+            streamer.stop()
+
+
 if __name__ == '__main__':
     timeout = int(os.getenv('NEXT_MESSAGE_MAX_WAIT_TIME')) / 1000
     movement = Movement(timeout=timeout)
     gimbal = Gimbal(timeout=timeout)
+    last_message_time: float | None = None
     streamer = Streamer(
         stream_host=os.getenv('STREAM_HOST'),
         username=os.getenv('STREAM_AUTHORIZATION_USERNAME'),
@@ -52,6 +65,8 @@ if __name__ == '__main__':
         logger=logger
     )
     mqtt_service.connect()
+
+    threading.Thread(target=_check_last_message_time, daemon=True).start()
 
     try:
         mqtt_service.loop_forever()

@@ -18,6 +18,8 @@ services:
     build:
       context: ./client
       target: ${ENVIRONMENT}
+    depends_on:
+      - emqx
     networks:
       - emqx-bridge
       - srs
