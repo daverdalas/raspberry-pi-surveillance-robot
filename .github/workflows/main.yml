@@ -20,6 +20,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
+          script_stop: true
           script: |
             cd /home/ubuntu/raspberrpi
             git fetch
