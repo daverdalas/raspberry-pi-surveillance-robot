@@ -1,0 +1,32 @@
+name: Node Command
+
+on:
+  workflow_call:
+    inputs:
+      command:
+        description: 'Command to run'
+        required: true
+        type: string
+      working-directory:
+        description: 'Working directory'
+        required: true
+        type: string
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.5'
+          cache: 'npm'
+          cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+      - name: Install dependencies
+        working-directory: ${{ inputs.working-directory }}
+        run: npm ci
+      - name: Run command
+        working-directory: ./web
+        run: ${{ inputs.command }}
